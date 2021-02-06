@@ -1,7 +1,8 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import './sign-in.styles.scss';
 import FormInput from '../form-input/form-input.component';
-import { signInWithGoogle } from '../../firebase/firebase.utils';
+import { googleSignInStart, emailSignInStart } from '../../redux/user/user.actions';
 import CustomButton from '../custom-button/custom-button.component';
 
 class SignIn extends React.Component {
@@ -15,7 +16,9 @@ class SignIn extends React.Component {
 
     handleSubmit = event => {
         event.preventDefault();
-        this.setState({ email: '', password: ''});
+        const { emailSignInStart } = this.props;
+        const { email, password } = this.state;
+        emailSignInStart(email, password);
     }
 
     handleChange = event => {
@@ -24,6 +27,7 @@ class SignIn extends React.Component {
     }
 
     render() {
+        const { googleSignInStart } = this.props;
         return(
             <div className="sign-in">
                 <h2>If you already have a Fashionet account:</h2>
@@ -34,7 +38,7 @@ class SignIn extends React.Component {
                     <FormInput name="password" value={this.state.password} type="password" handleChange={this.handleChange} label='password' required/>
                     <div className='buttons'>
                         <CustomButton type='submit'>Sign In</CustomButton>
-                        <CustomButton onClick={signInWithGoogle} isGoogleSignIn >Sign In With Google</CustomButton>
+                        <CustomButton type='button' onClick={googleSignInStart} isGoogleSignIn >Sign In With Google</CustomButton>
                     </div>
 
                 </form>
@@ -43,4 +47,9 @@ class SignIn extends React.Component {
     }
 }
 
-export default SignIn;
+const mapDispatchToProps = dispatch =>({
+    googleSignInStart: () => dispatch(googleSignInStart()),
+    emailSignInStart: (email, password) => dispatch(emailSignInStart({ email, password })),
+});
+
+export default connect(null, mapDispatchToProps)(SignIn);

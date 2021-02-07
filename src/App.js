@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 
 import './App.css';
@@ -12,13 +12,14 @@ import { selectCurrentUser } from './redux/user/user.selector';
 import CheckoutPage from './pages/checkout/checkout.component.jsx';
 //import { selectCollectionsForPreview } from './redux/shop/shop.selectors';
 import { checkUserSession } from './redux/user/user.actions';
-class App extends React.Component {
 
-  unsubscribeFromAuth = null
-
-  componentDidMount() {
-    const { checkUserSession } = this.props;
+const App = ({ checkUserSession, currentUser }) => {
+  useEffect(() => {
     checkUserSession();
+  }, [checkUserSession]);
+  // componentDidMount() {
+  //   const { checkUserSession } = this.props;
+  //   checkUserSession();
     
     // this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
 
@@ -35,14 +36,9 @@ class App extends React.Component {
     //   setCurrentUser(userAuth);
     //   //addCollectionAndDocuments('collections', collectionsArray.map(({title, items}) =>({title, items})));
     // });
-  }
+  // }
 
-  componentWillUnmount() {
-    this.unsubscribeFromAuth();
-  }
 
-  render() {
-    console.log('Current user: ' + this.props.currentUser);
     return (
       <div>
         <Header/>
@@ -50,11 +46,11 @@ class App extends React.Component {
           <Route exact path='/' component={HomePage} />
           <Route path='/shop' component={ShopPage} />
           <Route exact path='/checkout' component={CheckoutPage} />
-          <Route exact path='/signin' render={() => this.props.currentUser ? (<Redirect to='/' />) : (<SignInAndSignUpPage />)} />
+          <Route exact path='/signin' render={() => currentUser ? (<Redirect to='/' />) : (<SignInAndSignUpPage />)} />
         </Switch>
       </div>
     );
-  }
+
   
 }
 
